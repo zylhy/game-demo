@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .gameContainer {
+            width: 100%;
+            max-width: 500px;
+            height: 500px;
+            border: 1px solid black;
+            display: grid;
+            grid-template-columns: repeat(3, 33.33%);
+            align-items: center;
+            box-sizing: border-box;
+            grid-template-rows: repeat(3, 1fr);
+        }
+
+        .square {
+            border: 1px solid black;
+            height: 100%;
+            text-align: center;
+            display: grid;
+            place-items: center;
+            box-sizing: border-box;
+        }
+
+        .squareActive {
+            animation: fade 500ms infinite alternate;
+        }
+        .gameTime{
+            margin-top: 10px;
+        }
+        .replay{
+            display: block;
+            width: 200px;
+            height: 30px;
+            line-height: 30px;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+
+        @keyframes fade {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="gameContainer">
+    </div>
+    <div class="gameTime">
+        剩余时间30s
+    </div>
+    <button class="replay">重玩</button>
+</body>
+<script>
+    let gameTime = 30  // 每个玩家的游戏时长
+    let gameInterval = null  // 游戏定时器
+    let gameOver = false  // 游戏是否结束
+    // 游戏板
+    let gameBoard = [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+    ]
+    let gameRecord = []
+    let player = 'X'
+    // 获取游戏容器和游戏板元素
+    var gameContainer = document.querySelector('.gameContainer');
+    // 创建9个div元素并添加到游戏容器中
+    for (var i = 0; i < 9; i++) {
+        var square = document.createElement('div');
+        square.classList.add('square');
+        gameContainer.appendChild(square);
+    }
+
+    // 给每个方块添加点击事件
+    var squares = document.querySelectorAll('.square');
+    for (let i = 0; i < squares.length; i++) {
+        squares[i].addEventListener('click', function () {
+            //  判断游戏是否结束
+            if (gameOver) return
+            // 判断有没有值
+            if (gameBoard[parseInt(i / 3)][i % 3]) return
+
+            // 如果gameRecord没有值说明游戏刚开始
+            if (gameRecord.length === 0) {
+                // 开始游戏倒计时
+                gameInterval = setInterval(() => {
+                    gameTime--
+                    document.querySelector('.gameTime').textContent = `剩余时间${gameTime}s`
+                    if (gameTime <= 0) {
+                        clearInterval(gameInterval)
+                        document.querySelector('.gameTime').textContent = `游戏结束${gameRecord[gameRecord.length - 1].value}获胜`
+                        gameOver = true
+                        return
+                    }
+                }, 1000)
+            } else {
+                gameTime = 30
+            }
+            // 设置值
+            gameBoard[parseInt(i / 3)][i % 3] = player;
+            // 记录一下
+            gameRecord.push({
+                x: parseInt(i / 3),
+                y: i % 3,
+                value: player
+            })
+            this.textContent = player;
+            // 下一个人
+            player = player === 'X' ? 'O' : 'X';
+            console.log(gameRecord)
+
+            // 删除超出的元素
+            if (gameRecord.length > 5) {
+                let deleteObj = gameRecord.shift()
+                gameBoard[deleteObj.x][deleteObj.y] = 0
+                squares[deleteObj.x * 3 + deleteObj.y].textContent = ''
+            }
+            // 判断有没有胜利者
+            if (checkWinner()) {
+                // 先删除其他元素上的类名
+                squares.forEach(item => {
+                    item.classList.remove('squareActive')
+                })
+                clearInterval(gameInterval)
+                document.querySelector('.gameTime').textContent = `游戏结束${checkWinner()}获胜`
+                gameOver = true
+                return
+            }
+            // 提示要删除的元素
+            if (gameRecord.length >= 5) {
+                let obj = gameRecord[0]
+                // 先删除其他元素上的类名
+                squares.forEach(item => {
+                    item.classList.remove('squareActive')
+                })
+                // 添加类名
+                squares[obj.x * 3 + obj.y].classList.add('squareActive')
+            }
+
+        })
+    }
+
+    function checkWinner() {
+        // 判断行
+        for (let i = 0; i < 3; i++) {
+            if (gameBoard[i][0] === gameBoard[i][1] && gameBoard[i][1] === gameBoard[i][2] && gameBoard[i][0] !== 0) {
+                return gameBoard[i][0];
+            }
+        }
+        // 判断列
+        for (let i = 0; i < 3; i++) {
+            if (gameBoard[0][i] === gameBoard[1][i] && gameBoard[1][i] === gameBoard[2][i] && gameBoard[0][i] !== 0) {
+                return gameBoard[0][i];
+            }
+        }
+
+        // 判断左对角线
+        if (gameBoard[0][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][2] && gameBoard[0][0] !== 0) {
+            return gameBoard[0][0];
+
+        }
+        // 判断右对角线
+        if (gameBoard[0][2] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][0] && gameBoard[0][2] !== 0) {
+            return gameBoard[0][2];
+        }
+
+        return null
+    }
+
+    document.querySelector('.replay').addEventListener('click', () => {
+        location.reload()
+    })
+</script>
+
+</html>

@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.gameContainer {
+    width: 500px;
+    height: 500px;
+    border: 1px solid black;
+    display: grid;
+    grid-template-columns: repeat(3, 33.33%);
+    align-items: center;
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.square {
+    border: 1px solid black;
+    height: 100%;
+    text-align: center;
+    display: grid; /* 添加grid布局 */
+    place-items: center; /* 将内容水平和垂直居中 */
+}
