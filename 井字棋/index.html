@@ -36,10 +36,12 @@
         .squareActive {
             animation: fade 500ms infinite alternate;
         }
-        .gameTime{
+
+        .gameTime {
             margin-top: 10px;
         }
-        .replay{
+
+        .replay {
             display: block;
             width: 200px;
             height: 30px;
@@ -134,14 +136,15 @@
                 gameBoard[deleteObj.x][deleteObj.y] = 0
                 squares[deleteObj.x * 3 + deleteObj.y].textContent = ''
             }
+            let winner = checkWinner()
             // 判断有没有胜利者
-            if (checkWinner()) {
+            if (winner) {
                 // 先删除其他元素上的类名
                 squares.forEach(item => {
                     item.classList.remove('squareActive')
                 })
                 clearInterval(gameInterval)
-                document.querySelector('.gameTime').textContent = `游戏结束${checkWinner()}获胜`
+                document.querySelector('.gameTime').textContent = `游戏结束${winner}获胜`
                 gameOver = true
                 return
             }
@@ -161,26 +164,51 @@
 
     function checkWinner() {
         // 判断行
-        for (let i = 0; i < 3; i++) {
-            if (gameBoard[i][0] === gameBoard[i][1] && gameBoard[i][1] === gameBoard[i][2] && gameBoard[i][0] !== 0) {
-                return gameBoard[i][0];
+
+        // i = 0 j=0
+        
+        
+        for (let i = 0; i < gameBoard.length; i++) {
+            let row = gameBoard[i][0]
+            for (let j = 0; j < gameBoard[i].length; j++) {
+                
+    if(gameBoard[i][j] == 0) break
+                if (gameBoard[i][j] !== row || gameBoard[i][j] == 0) {
+                    break
+                } else {
+                    return gameBoard[i][0]
+                }
             }
+
+
         }
+        console.log(1)
         // 判断列
-        for (let i = 0; i < 3; i++) {
-            if (gameBoard[0][i] === gameBoard[1][i] && gameBoard[1][i] === gameBoard[2][i] && gameBoard[0][i] !== 0) {
-                return gameBoard[0][i];
+        for (let i = 0; i < gameBoard[0].length; i++) {
+            let column = gameBoard[0][i]
+            for (let j = 0; j < gameBoard.length; j++) {
+                if (gameBoard[j][i] !== column || gameBoard[j][i] == 0) {
+                    break
+                } else {
+                    return gameBoard[j][i]
+                }
             }
         }
-
-        // 判断左对角线
-        if (gameBoard[0][0] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][2] && gameBoard[0][0] !== 0) {
-            return gameBoard[0][0];
-
+        let leftTop = gameBoard[0][0]
+        let rightTop = gameBoard[0][gameBoard[0].length - 1]
+        for (let i = 0; i < gameBoard.length; i++) {
+            if (gameBoard[i][i] !== leftTop || gameBoard[i][i] == 0) {
+                break
+            } else {
+                return leftTop
+            }
         }
-        // 判断右对角线
-        if (gameBoard[0][2] === gameBoard[1][1] && gameBoard[1][1] === gameBoard[2][0] && gameBoard[0][2] !== 0) {
-            return gameBoard[0][2];
+        for (let i = 0; i < gameBoard.length; i++) {
+            if (gameBoard[i][gameBoard[0].length - 1 - i] !== rightTop || gameBoard[i][gameBoard[0].length - 1 - i] == 0) {
+                break
+            } else {
+                return rightTop
+            }
         }
 
         return null
