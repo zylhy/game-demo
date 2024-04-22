@@ -166,47 +166,56 @@
         // 判断行
 
         // i = 0 j=0
-        
-        
-        for (let i = 0; i < gameBoard.length; i++) {
+
+
+        for (let i = 0; i < gameBoard.length-1; i++) {
             let row = gameBoard[i][0]
             for (let j = 0; j < gameBoard[i].length; j++) {
-                
-    if(gameBoard[i][j] == 0) break
-                if (gameBoard[i][j] !== row || gameBoard[i][j] == 0) {
-                    break
-                } else {
-                    return gameBoard[i][0]
-                }
+                if (gameBoard[i][j] !== row  || gameBoard[i][j] == 0) continue
+                if (gameBoard[i][j] == gameBoard[i][j + 1]) {
+                    if (j + 1 == gameBoard[i].length - 1) {
+                        return row
+                    }
+                    continue
+                } else break;
+
+
             }
-
-
         }
-        console.log(1)
         // 判断列
-        for (let i = 0; i < gameBoard[0].length; i++) {
+        for (let i = 0; i < gameBoard[0].length-1; i++) {
             let column = gameBoard[0][i]
             for (let j = 0; j < gameBoard.length; j++) {
-                if (gameBoard[j][i] !== column || gameBoard[j][i] == 0) {
-                    break
-                } else {
-                    return gameBoard[j][i]
-                }
+
+
+                if (gameBoard[i][j] !== column || gameBoard[i][j] !== gameBoard[i][j + 1] || gameBoard[i][j] == 0) return null
+                debugger
+                return column
+
+
+if(gameBoard[j][i]!==column||gameBoard[j][i]==0)continue 
+ if(gameBoard[j][i] == gameBoard[j][i+ 1]){
+    
+ }
+
             }
         }
         let leftTop = gameBoard[0][0]
         let rightTop = gameBoard[0][gameBoard[0].length - 1]
         for (let i = 0; i < gameBoard.length; i++) {
-            if (gameBoard[i][i] !== leftTop || gameBoard[i][i] == 0) {
-                break
+            if (gameBoard[i][i] !== leftTop || gameBoard[i][i] !== gameBoard[i + 1][i + 1] || gameBoard[i][i] == 0) {
+                return null
             } else {
+                debugger
                 return leftTop
             }
         }
         for (let i = 0; i < gameBoard.length; i++) {
-            if (gameBoard[i][gameBoard[0].length - 1 - i] !== rightTop || gameBoard[i][gameBoard[0].length - 1 - i] == 0) {
-                break
+            if (gameBoard[i][gameBoard[0].length - 1 - i] !== rightTop || gameBoard[i + 1][gameBoard[0].length - 1 - i] !== gameBoard[i + 1][gameBoard[0].length - 1 - i - 1] || gameBoard[i][gameBoard[0].length - 1 - i] == 0) {
+                return null
+
             } else {
+                debugger
                 return rightTop
             }
         }
